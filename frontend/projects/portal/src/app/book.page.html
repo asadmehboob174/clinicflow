@@ -1,0 +1,75 @@
+<h1 class="text-2xl font-bold">Book a visit</h1>
+
+@if (!auth.isLoggedIn()) {
+  <div class="mt-4"><app-login-box message="Please log in to book a visit." /></div>
+} @else if (needsProfile()) {
+  <form class="card mt-4 grid gap-3 p-4" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+    <p class="font-semibold">First, tell us your name and phone number.</p>
+    <input class="field" formControlName="fullName" placeholder="Full name" aria-label="Full name" />
+    <input class="field" formControlName="phone" placeholder="Phone" aria-label="Phone" />
+    <button class="btn btn-main" type="submit" [disabled]="profileForm.invalid">Save</button>
+  </form>
+} @else {
+  <section class="mt-5">
+    <h2 class="font-semibold">1. Pick a treatment</h2>
+    <div class="mt-2 grid gap-2 sm:grid-cols-2">
+      @for (item of treatments(); track item.id) {
+        <button class="choice" [class.choice-on]="treatment()?.id === item.id" (click)="pick({ treatment: item })" data-testid="treatment">
+          <span class="block font-semibold">{{ item.name }}</span>
+          <span class="block text-sm text-stone-600">{{ item.durationMinutes }} min · {{ item.price | currency: 'USD' : 'symbol' : '1.0-0' }}</span>
+        </button>
+      }
+    </div>
+  </section>
+
+  <section class="mt-5">
+    <h2 class="font-semibold">2. Pick a doctor</h2>
+    <div class="mt-2 grid gap-2 sm:grid-cols-2">
+      @for (item of doctors(); track item.id) {
+        <button class="choice" [class.choice-on]="doctor()?.id === item.id" (click)="pick({ doctor: item })" data-testid="doctor">
+          <span class="block font-semibold">{{ item.fullName }}</span>
+          <span class="block text-sm text-stone-600">{{ item.specialty }}</span>
+        </button>
+      }
+    </div>
+  </section>
+
+  <section class="mt-5">
+    <h2 class="font-semibold">3. Pick a day</h2>
+    <div class="mt-2 flex gap-2 overflow-x-auto pb-2">
+      @for (day of days; track day) {
+        <button class="choice w-20 shrink-0 text-center" [class.choice-on]="date() === day" (click)="pick({ date: day })" data-testid="day">
+          <span class="block text-xs text-stone-600">{{ day | date: 'EEE' }}</span>
+          <span class="block font-semibold">{{ day | date: 'd MMM' }}</span>
+        </button>
+      }
+    </div>
+  </section>
+
+  @if (treatment() && doctor()) {
+    <section class="mt-5">
+      <h2 class="font-semibold">4. Pick a time</h2>
+      @if (slots().loading) {
+        <p class="mt-2 text-stone-600">Looking for free times...</p>
+      } @else {
+        <div class="mt-2 grid grid-cols-4 gap-2 sm:grid-cols-6">
+          @for (time of slots().times; track time) {
+            <button class="choice p-2 text-center font-semibold tabular-nums" [class.choice-on]="slot() === time" (click)="slot.set(time)" data-testid="slot">
+              {{ time | date: 'HH:mm' : offset }}
+            </button>
+          } @empty {
+            <p class="col-span-full text-stone-600">No free times on this day. Please pick another day.</p>
+          }
+        </div>
+      }
+    </section>
+  }
+
+  @if (error(); as message) {
+    <p class="mt-4 rounded-xl bg-red-50 p-3 text-red-800" role="alert">{{ message }}</p>
+  }
+
+  <button class="btn btn-main mt-6 w-full" [disabled]="!slot() || !profile() || saving()" (click)="book()" data-testid="confirm">
+    {{ saving() ? 'Booking...' : 'Confirm booking' }}
+  </button>
+}

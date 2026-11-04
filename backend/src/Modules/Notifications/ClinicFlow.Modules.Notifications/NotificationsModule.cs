@@ -108,7 +108,7 @@ internal sealed class AppointmentNotifier(
 
         var patient = await patients.GetContact(patientId, ct);
         var doctorNames = await doctors.GetDoctorNames([doctorId], ct);
-        var message = $"{patient?.FullName ?? "A patient"} with {doctorNames.GetValueOrDefault(doctorId, "a doctor")}, {startsAtUtc:yyyy-MM-dd HH:mm} UTC";
+        var message = $"{patient?.FullName ?? "A patient"} with {doctorNames.GetValueOrDefault(doctorId, "a doctor")}, {clock.ToLocal(startsAtUtc):d MMM, HH:mm}";
         if (reason is not null)
         {
             message += $". Reason: {reason}";

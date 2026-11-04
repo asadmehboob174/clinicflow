@@ -1,0 +1,36 @@
+{
+  "name": "clinicflow-frontend",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "ng serve",
+    "admin": "ng serve admin",
+    "portal": "ng serve portal",
+    "build": "ng build admin && ng build portal"
+  },
+  "private": true,
+  "packageManager": "npm@11.19.0",
+  "dependencies": {
+    "@angular/common": "^22.1.0",
+    "@angular/compiler": "^22.1.0",
+    "@angular/core": "^22.1.0",
+    "@angular/forms": "^22.1.0",
+    "@angular/platform-browser": "^22.1.0",
+    "@angular/router": "^22.1.0",
+    "@microsoft/signalr": "^10.0.11",
+    "@ngrx/effects": "^22.0.1",
+    "@ngrx/store": "^22.0.1",
+    "keycloak-js": "^26.2.5",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.2.5",
+    "@angular/cli": "^22.1.6",
+    "@angular/compiler-cli": "^22.1.0",
+    "@tailwindcss/postcss": "^4.3.4",
+    "postcss": "^8.5.32",
+    "prettier": "^3.8.1",
+    "tailwindcss": "^4.3.4",
+    "typescript": "~6.0.2"
+  }
+}

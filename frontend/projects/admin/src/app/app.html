@@ -1,0 +1,90 @@
+@if (!auth.isLoggedIn()) {
+  <main class="grid min-h-screen place-items-center p-4">
+    <section class="panel w-full max-w-sm p-6">
+      <p class="text-sm font-semibold text-teal-300">ClinicFlow Admin</p>
+      <h1 class="mt-1 text-2xl font-bold">Sign in to the front desk</h1>
+      <p class="mt-2 text-sm text-slate-400">A practice project. All people and data are made up.</p>
+      <div class="mt-5 grid gap-2">
+        @if (auth.usesDevLogin) {
+          <button class="btn btn-main" (click)="auth.login('dev:admin')">Sign in as Admin</button>
+          <button class="btn btn-soft" (click)="auth.login('dev:reception')">Sign in as Reception</button>
+        } @else {
+          <button class="btn btn-main" (click)="auth.login()">Sign in with Keycloak</button>
+        }
+      </div>
+    </section>
+  </main>
+} @else if (!auth.isStaff()) {
+  <main class="grid min-h-screen place-items-center p-4 text-center">
+    <div>
+      <p>This app is for clinic staff.</p>
+      <button class="btn btn-soft mt-3" (click)="auth.logout()">Sign out</button>
+    </div>
+  </main>
+} @else {
+  <div class="min-h-screen md:grid md:grid-cols-[210px_1fr]">
+    <aside class="border-b border-slate-800 p-3 md:border-r md:border-b-0 md:p-4">
+      <div class="flex items-center justify-between md:block">
+        <p class="font-bold text-teal-300 md:mb-6 md:text-lg">ClinicFlow</p>
+        <button class="btn btn-soft md:hidden" (click)="auth.logout()">Sign out</button>
+      </div>
+      <nav class="mt-2 flex gap-1 md:mt-0 md:flex-col" aria-label="Main">
+        @for (link of links; track link.path) {
+          <a
+            class="flex-1 rounded-lg px-3 py-2 text-center text-sm font-medium text-slate-300 hover:bg-slate-800 md:text-left"
+            [routerLink]="link.path"
+            routerLinkActive="bg-slate-800 text-teal-300"
+            >{{ link.label }}</a
+          >
+        }
+      </nav>
+      <div class="mt-8 hidden md:block">
+        <p class="truncate text-xs text-slate-500">{{ auth.email() }}</p>
+        <button class="btn btn-soft mt-2 w-full" (click)="auth.logout()">Sign out</button>
+      </div>
+    </aside>
+
+    <div class="min-w-0">
+      <header class="relative flex items-center justify-end gap-3 border-b border-slate-800 px-4 py-2">
+        <span
+          class="text-xs"
+          [class.text-emerald-300]="notifications.live()"
+          [class.text-slate-500]="!notifications.live()"
+          data-testid="live-status"
+          >{{ notifications.live() ? '● Live' : '○ Offline' }}</span
+        >
+        <button
+          class="btn btn-soft"
+          (click)="bellOpen.set(!bellOpen())"
+          [attr.aria-expanded]="bellOpen()"
+          data-testid="bell"
+        >
+          Alerts
+          @if (notifications.unread() > 0) {
+            <span class="ml-2 rounded-full bg-teal-400 px-1.5 text-xs font-bold text-slate-950" data-testid="unread">{{
+              notifications.unread()
+            }}</span>
+          }
+        </button>
+
+        @if (bellOpen()) {
+          <section class="panel absolute top-13 right-3 z-20 max-h-96 w-[min(340px,calc(100vw-24px))] overflow-auto bg-slate-900 p-2">
+            @for (item of notifications.items(); track item.id) {
+              <button
+                class="block w-full rounded-lg p-2 text-left hover:bg-slate-800"
+                [class.opacity-60]="item.readAtUtc"
+                (click)="notifications.markRead(item)"
+              >
+                <span class="block text-sm font-semibold">{{ item.title }}</span>
+                <span class="block text-xs text-slate-400">{{ item.message }}</span>
+              </button>
+            } @empty {
+              <p class="p-3 text-sm text-slate-400">No alerts yet.</p>
+            }
+          </section>
+        }
+      </header>
+      <main class="p-4 md:p-6"><router-outlet /></main>
+    </div>
+  </div>
+}
