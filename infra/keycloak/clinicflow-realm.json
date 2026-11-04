@@ -1,0 +1,68 @@
+{
+  "realm": "clinicflow",
+  "enabled": true,
+  "registrationAllowed": false,
+  "roles": {
+    "realm": [
+      { "name": "admin" },
+      { "name": "reception" },
+      { "name": "patient" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "clinicflow-web",
+      "name": "ClinicFlow web apps",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["http://localhost:4200/*", "http://localhost:4201/*"],
+      "webOrigins": ["http://localhost:4200", "http://localhost:4201"],
+      "attributes": { "pkce.code.challenge.method": "S256" },
+      "protocolMappers": [
+        {
+          "name": "api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.custom.audience": "clinicflow-api",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin.demo",
+      "email": "admin.demo@example.com",
+      "firstName": "Admin",
+      "lastName": "Demo",
+      "enabled": true,
+      "emailVerified": true,
+      "realmRoles": ["admin"],
+      "credentials": [{ "type": "password", "value": "demo", "temporary": false }]
+    },
+    {
+      "username": "reception.demo",
+      "email": "reception.demo@example.com",
+      "firstName": "Reception",
+      "lastName": "Demo",
+      "enabled": true,
+      "emailVerified": true,
+      "realmRoles": ["reception"],
+      "credentials": [{ "type": "password", "value": "demo", "temporary": false }]
+    },
+    {
+      "username": "sara",
+      "email": "sara@example.com",
+      "firstName": "Sara",
+      "lastName": "Malik",
+      "enabled": true,
+      "emailVerified": true,
+      "realmRoles": ["patient"],
+      "credentials": [{ "type": "password", "value": "demo", "temporary": false }]
+    }
+  ]
+}

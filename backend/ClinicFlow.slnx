@@ -1,0 +1,30 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/BuildingBlocks/">
+    <Project Path="src/BuildingBlocks/ClinicFlow.BuildingBlocks/ClinicFlow.BuildingBlocks.csproj" />
+  </Folder>
+  <Folder Name="/src/Host/">
+    <Project Path="src/Host/ClinicFlow.Api/ClinicFlow.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Appointments/">
+    <Project Path="src/Modules/Appointments/ClinicFlow.Modules.Appointments.Contracts/ClinicFlow.Modules.Appointments.Contracts.csproj" />
+    <Project Path="src/Modules/Appointments/ClinicFlow.Modules.Appointments/ClinicFlow.Modules.Appointments.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Doctors/">
+    <Project Path="src/Modules/Doctors/ClinicFlow.Modules.Doctors.Contracts/ClinicFlow.Modules.Doctors.Contracts.csproj" />
+    <Project Path="src/Modules/Doctors/ClinicFlow.Modules.Doctors/ClinicFlow.Modules.Doctors.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Notifications/">
+    <Project Path="src/Modules/Notifications/ClinicFlow.Modules.Notifications/ClinicFlow.Modules.Notifications.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Patients/">
+    <Project Path="src/Modules/Patients/ClinicFlow.Modules.Patients.Contracts/ClinicFlow.Modules.Patients.Contracts.csproj" />
+    <Project Path="src/Modules/Patients/ClinicFlow.Modules.Patients/ClinicFlow.Modules.Patients.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ClinicFlow.ArchitectureTests/ClinicFlow.ArchitectureTests.csproj" />
+    <Project Path="tests/ClinicFlow.IntegrationTests/ClinicFlow.IntegrationTests.csproj" />
+    <Project Path="tests/ClinicFlow.UnitTests/ClinicFlow.UnitTests.csproj" />
+  </Folder>
+</Solution>

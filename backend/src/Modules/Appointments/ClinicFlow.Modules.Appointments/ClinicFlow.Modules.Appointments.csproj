@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\ClinicFlow.Modules.Appointments.Contracts\ClinicFlow.Modules.Appointments.Contracts.csproj" />
+    <ProjectReference Include="..\..\Doctors\ClinicFlow.Modules.Doctors.Contracts\ClinicFlow.Modules.Doctors.Contracts.csproj" />
+    <ProjectReference Include="..\..\Patients\ClinicFlow.Modules.Patients.Contracts\ClinicFlow.Modules.Patients.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

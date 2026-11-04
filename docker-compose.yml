@@ -1,0 +1,70 @@
+# Local infrastructure. Copy .env.example to .env and set your own values first.
+name: clinicflow
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${SQL_SA_PASSWORD:?Set SQL_SA_PASSWORD in .env}
+    ports: ["1433:1433"]
+    volumes: ["sql-data:/var/opt/mssql"]
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q 'SELECT 1' -b"]
+      interval: 5s
+      retries: 20
+      start_period: 15s
+    profiles: ["full"]
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    environment:
+      RABBITMQ_DEFAULT_USER: clinicflow
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?Set RABBITMQ_PASSWORD in .env}
+    ports: ["5672:5672", "15672:15672"]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      retries: 10
+
+  redis:
+    image: redis:8-alpine
+    ports: ["6379:6379"]
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Set KEYCLOAK_ADMIN_PASSWORD in .env}
+    ports: ["8080:8080"]
+    volumes: ["./infra/keycloak:/opt/keycloak/data/import:ro"]
+
+  api:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Default: Server=sqlserver;Database=ClinicFlow;User Id=sa;Password=${SQL_SA_PASSWORD};TrustServerCertificate=True
+      Database__MigrateOnStart: "true"
+      Database__Seed: "true"
+      Cache__Redis: redis:6379
+      Messaging__RabbitMq: amqp://clinicflow:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      Auth__Authority: http://keycloak:8080/realms/clinicflow
+      Auth__MetadataAddress: http://keycloak:8080/realms/clinicflow/.well-known/openid-configuration
+      Auth__ValidIssuer: http://localhost:8080/realms/clinicflow
+      Auth__Audience: clinicflow-api
+      Auth__RequireHttps: "false"
+      Cors__Origins__0: http://localhost:4200
+      Cors__Origins__1: http://localhost:4201
+    ports: ["5080:8080"]
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+      redis: { condition: service_started }
+      keycloak: { condition: service_started }
+      sqlserver: { condition: service_healthy }
+    profiles: ["full"]
+
+volumes:
+  sql-data:
